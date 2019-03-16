@@ -1,20 +1,11 @@
-import utils
 import numpy as np
-from matplotlib import pyplot as plt
-from sklearn.cluster import SpectralClustering
-from scipy.spatial.distance import cosine, euclidean
-from numpy.random import permutation as rpm
-from plot import plot_images, plot_confusion_matrix
-from utils import resize, sample_index, gen_solution, get_purity, get_nmi
-from numpy.linalg import norm
-
 import json
 import csv
 import itertools
 import sys
 
 # load raw signal data
-data=np.load('../data/swbd.npy').item()
+data=np.load('swbd.npy').item()
 def stack_frames(num_frames,timeseries):
     pad = num_frames//2
     pad_timeseries = np.pad(timeseries,((pad,pad),(0,0)),"constant")
@@ -32,12 +23,12 @@ for c in ["train","dev","test"]:
     t_data = data[c]["data"]
     pad_t_data = list(map(lambda x: stack_frames(5,x), t_data))
     pad_frames = []
-    
-    for i in pad_t_data: 
+
+    for i in pad_t_data:
         for j in range(i.shape[0]):
             pad_frames.append(i[j].tolist())
     print(2)
-    
+
     frame_labels = []
     for i in range(len(pad_t_data)):
         for j in range(pad_t_data[i].shape[0]):
@@ -50,13 +41,13 @@ for c in ["train","dev","test"]:
     temp = {}
     temp["data"] = pad_frames
     temp["frames"] = frame_labels
-    temp["labels"] =data[c]["labels"] 
+    temp["labels"] =data[c]["labels"]
     with open('pad_swbd_' + c + '_.json', 'w') as fp:
         json.dump(temp, fp)
 
-json_data =  data 
+json_data =  data
 
-''' 
+'''
 spark = SparkSession\
         .builder\
         .master("spark://yiyangou-VirtualBox:7077")\
